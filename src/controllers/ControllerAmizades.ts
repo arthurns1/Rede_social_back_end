@@ -7,7 +7,7 @@ interface Amizade {
     status: string;
 }
 
-export class ControllerAdminComunidade {
+export class ControllerAmizades {
     static async ask_amizades(req: Request<{}, {}, Amizade>, res: Response) {
         try {
             const params = [
