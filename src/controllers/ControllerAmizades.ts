@@ -55,7 +55,7 @@ export class ControllerAmizades {
 
     static async confirm_amizade(req: Request, res: Response) {
         try {
-            const params = [req.body.login_amigo, req.body.login_usuarios];
+            const params = [req.body.login_amigo, req.body.login_usuario];
 
             const results = await pool.query(
                 "UPDATE FROM amizades WHERE login_amigo = $1 AND login_usuario = $2 SET status = 'aceita';",

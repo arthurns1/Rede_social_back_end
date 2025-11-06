@@ -67,7 +67,7 @@ export class ControllerTopicos {
 
     static async update_topico_by_id(req: Request, res: Response) {
         try {
-            const params = [req.params.id_topico, req.body.nome_topico];
+            const params = [req.params.id, req.body.nome_topico];
 
             const results = await pool.query(
                 "UPDATE topicos WHERE id_topico = $1 SET nome_topico = $2;",
