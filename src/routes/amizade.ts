@@ -8,6 +8,10 @@ amizade.get(
     ControllerAmizades.get_all_user_amizades,
 );
 amizade.get(
+    "/get_all_user_not_amizades/:login",
+    ControllerAmizades.get_all_user_not_amizades,
+);
+amizade.get(
     "/get_all_pedidos_amizade/:login",
     ControllerAmizades.get_all_pedidos_amizade,
 );

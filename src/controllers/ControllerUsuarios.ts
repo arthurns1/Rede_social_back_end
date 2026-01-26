@@ -11,6 +11,7 @@ export interface Usuario {
 export class ControllerUsuarios {
     static async create_usuario(req: Request<{}, {}, Usuario>, res: Response) {
         try {
+            console.log(req.body);
             const params = [
                 req.body.login,
                 req.body.senha,
@@ -86,6 +87,27 @@ export class ControllerUsuarios {
 
             const results = await pool.query(
                 "UPDATE usuarios SET senha = $2, cargo = $3, nome_usuario = $4 WHERE login = $1 ;",
+                params,
+            );
+
+            res.status(201).json({
+                success_message: "Sucesso ao alterar usuário!",
+                results: results,
+            });
+        } catch (err) {
+            res.status(500).json({
+                error_message: "Houve um erro interno ao alterar usuário!",
+                error: err,
+            });
+        }
+    }
+
+    static async update_usuario_name_by_login(req: Request, res: Response) {
+        try {
+            const params = [req.body.nome_usuario, req.params.login];
+
+            const results = await pool.query(
+                "UPDATE usuarios SET nome_usuario = $1 WHERE login = $2 ;",
                 params,
             );
 

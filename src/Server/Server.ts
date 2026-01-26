@@ -14,10 +14,6 @@ import Express from "express";
 
 const Server = Express();
 
-Server.get("/", (req, res) => {
-    res.send("Teste");
-});
-
 expressWs(Server);
 Server.use(cors());
 Server.use(Express.json());

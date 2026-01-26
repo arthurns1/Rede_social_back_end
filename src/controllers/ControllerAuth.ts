@@ -18,9 +18,6 @@ export class ControllerAuth {
             const token = await Jwt.sign(
                 usuario,
                 process.env.SECRET_KEY as string,
-                {
-                    expiresIn: "1h",
-                },
             );
 
             res.status(200).json({

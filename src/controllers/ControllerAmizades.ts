@@ -17,7 +17,7 @@ export class ControllerAmizades {
             ];
 
             await pool.query(
-                "INSERT INTO amizades (login_usuario, login_amigo, status) VALUES ($1, $2, $3)",
+                "INSERT INTO amizades (login_usuario, login_amigo, status) VALUES ($1, $2, $3);",
                 params,
             );
 
@@ -42,7 +42,7 @@ export class ControllerAmizades {
                 params,
             );
 
-            res.status(201).json({
+            res.status(200).json({
                 success_message: "",
                 results: results.rows,
             });
@@ -54,11 +54,33 @@ export class ControllerAmizades {
         }
     }
 
+    static async get_all_user_not_amizades(req: Request, res: Response) {
+        try {
+            const params = [req.params.login];
+
+            const results = await pool.query(
+                "SELECT * FROM usuarios u WHERE u.login <> $1 AND NOT EXISTS ( SELECT 1 FROM amizades a WHERE  (a.login_usuario = $1 AND a.login_amigo = u.login) OR (a.login_amigo = $1 AND a.login_usuario = u.login));",
+                params,
+            );
+
+            res.status(200).json({
+                success_message: "",
+                results: results.rows,
+            });
+        } catch (err) {
+            res.status(500).json({
+                error_message: "Houve um erro interno ao retornar não amigos!",
+                error: err,
+            });
+        }
+    }
+
     static async get_all_pedidos_amizade(req: Request, res: Response) {
         try {
-            const params = [req.params.login_usuario];
+            const params = [req.params.login];
+
             const results = await pool.query(
-                "SELECT * FROM amizades WHERE login_usuario = $1;",
+                "SELECT * FROM amizades WHERE login_amigo = $1 AND status = 'pendente';",
                 params,
             );
 
@@ -76,6 +98,7 @@ export class ControllerAmizades {
 
     static async confirm_amizade(req: Request, res: Response) {
         try {
+            console.log(req.body);
             const params = [
                 req.body.login_amigo,
                 req.body.login_usuario,
