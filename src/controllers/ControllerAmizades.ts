@@ -17,7 +17,7 @@ export class ControllerAmizades {
             ];
 
             await pool.query(
-                "INSERT INTO amizades (login_usuario, login_amigo, status) VALUES ($1, $2, $3);",
+                "INSERT INTO amizades (login_usuario, login_amigo, status) VALUES ($1, $2, $3)",
                 params,
             );
 
@@ -26,6 +26,7 @@ export class ControllerAmizades {
                 results: [],
             });
         } catch (err) {
+            console.log(err);
             res.status(500).json({
                 error_message: "Houve um erro interno ao enviar pedido!",
                 error: err,
@@ -98,7 +99,6 @@ export class ControllerAmizades {
 
     static async confirm_amizade(req: Request, res: Response) {
         try {
-            console.log(req.body);
             const params = [
                 req.body.login_amigo,
                 req.body.login_usuario,

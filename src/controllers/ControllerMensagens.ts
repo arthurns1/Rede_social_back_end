@@ -25,7 +25,7 @@ export class ControllerMensagens {
             ];
 
             await pool.query(
-                "INSERT INTO mensagens (id_mensagem, conteudo, data_envio, receptor, emissor) VALUES (DEFAULT, $1, $2, $3, $4)",
+                "INSERT INTO mensagens (id_mensagem, conteudo, data_envio, receptor, emissor, vizualizada) VALUES (DEFAULT, $1, $2, $3, $4, false)",
                 params,
             );
 
@@ -54,32 +54,6 @@ export class ControllerMensagens {
                 error_message: "Houve um erro interno ao retornar mensagens!",
                 error: err,
             });
-        }
-    }
-
-    static async get_two_users_messages(ws: WebSocket, req: Request) {
-        try {
-            ws.on("message", async () => {
-                const params = [req.body.emissor, req.body.receptor];
-                const results = await pool.query(
-                    "SELECT * FROM mensagens WHERE emissor = $1 AND receptor = $2;",
-                    params,
-                );
-
-                ws.send(
-                    JSON.stringify({
-                        success_message: "Sucesso ao enviar dados",
-                        results: results,
-                    }),
-                );
-            });
-        } catch (err) {
-            ws.send(
-                JSON.stringify({
-                    error_message: "Houve um erro ao retornar mensagens!",
-                    error: err,
-                }),
-            );
         }
     }
 
