@@ -14,6 +14,7 @@ export class ControllerComunidades {
         try {
             const params = [req.body.nome_comunidade];
 
+            console.log(params);
             await pool.query(
                 "INSERT INTO comunidades (id_comunidade, nome_comunidade) VALUES (DEFAULT, $1)",
                 params,
@@ -34,6 +35,48 @@ export class ControllerComunidades {
     static async get_all_comunidades(req: Request, res: Response) {
         try {
             const results = await pool.query("SELECT * FROM comunidades;");
+
+            res.status(201).json({
+                success_message: "Sucesso ao retornar comunidades!",
+                results: results.rows,
+            });
+        } catch (err) {
+            res.status(500).json({
+                error_message: "Houve um erro interno ao retornar comunidades!",
+                error: err,
+            });
+        }
+    }
+
+    static async get_all_user_not_comunidades(req: Request, res: Response) {
+        try {
+            const params = [req.params.login];
+
+            const results = await pool.query(
+                "SELECT * FROM comunidades c WHERE NOT EXISTS(SELECT 1 FROM usuarios_comunidades uc WHERE uc.login = $1 AND uc.id_comunidade = c.id_comunidade);",
+                params,
+            );
+
+            res.status(201).json({
+                success_message: "Sucesso ao retornar comunidades!",
+                results: results.rows,
+            });
+        } catch (err) {
+            res.status(500).json({
+                error_message: "Houve um erro interno ao retornar comunidades!",
+                error: err,
+            });
+        }
+    }
+
+    static async get_all_user_comunidades(req: Request, res: Response) {
+        try {
+            const params = [req.params.login];
+
+            const results = await pool.query(
+                "SELECT * FROM comunidades c WHERE EXISTS(SELECT 1 FROM usuarios_comunidades uc WHERE uc.login = $1 AND uc.id_comunidade = c.id_comunidade);",
+                params,
+            );
 
             res.status(201).json({
                 success_message: "Sucesso ao retornar comunidades!",

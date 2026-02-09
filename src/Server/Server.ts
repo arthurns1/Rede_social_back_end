@@ -11,7 +11,7 @@ import { auth } from "../routes/auth";
 import cors from "cors";
 import Express from "express";
 import http from "http";
-import WebSocket from "ws";
+import io from "socket.io";
 import { ControllerMensagens } from "../controllers/ControllerMensagens";
 import { pool } from "../config/db";
 
@@ -30,31 +30,25 @@ Server.use(auth);
 
 const httpServer = http.createServer(Server);
 
-const wss = new WebSocket.Server({ server: httpServer });
+const wss = new io.Server(httpServer, {
+    cors: { origin: "*" },
+});
 
 wss.on("connection", (socket) => {
-    socket.on("message", async (msg) => {
-        try {
-            const data = JSON.parse(msg.toString());
-            const params = [data.emissor, data.receptor];
+    socket.on("enviar_mensagem", async (msg) => {
+        const params = [
+            msg.conteudo,
+            msg.data_envio,
+            msg.receptor,
+            msg.emissor,
+        ];
 
-            const results = await pool.query(
-                "SELECT * FROM mensagens WHERE receptor = $1 AND emissor = $2 OR emissor = $1 AND receptor = $2;",
-                params,
-            );
+        const mensagem = await pool.query(
+            "INSERT INTO mensagens (id_mensagem, conteudo, data_envio, receptor, emissor, vizualizada) VALUES (DEFAULT, $1, $2, $3, $4, false) RETURNING *",
+            params,
+        );
 
-            socket.send(
-                JSON.stringify({
-                    success_message: "Sucesso ao enviar dados",
-                    results: results.rows,
-                }),
-            );
-        } catch (err) {
-            JSON.stringify({
-                error_message: "Houve um erro ao retornar mensagens!",
-                error: err,
-            });
-        }
+        socket.emit("receber_mensagem", JSON.stringify(mensagem.rows[0]));
     });
 });
 

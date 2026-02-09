@@ -57,6 +57,26 @@ export class ControllerMensagens {
         }
     }
 
+    static async get_two_users_messages(req: Request, res: Response) {
+        try {
+            const params = [req.body.receptor, req.body.emissor];
+            const results = await pool.query(
+                "SELECT * FROM mensagens WHERE receptor = $1 AND emissor = $2 OR emissor = $1 AND receptor = $2;",
+                params,
+            );
+
+            res.status(201).json({
+                success_message: "Sucesso ao retornar mensagens!",
+                results: results.rows,
+            });
+        } catch (err) {
+            res.status(500).json({
+                error_message: "Houve um erro interno ao retornar mensagens!",
+                error: err,
+            });
+        }
+    }
+
     static async get_mensagem_by_id(req: Request, res: Response) {
         try {
             const params = [req.params.id];
