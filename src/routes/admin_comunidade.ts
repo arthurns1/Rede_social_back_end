@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { ControllerAdminComunidade } from "../controllers/ControllerAdminsComunidades";
+import { check_role } from "../middlewares/validation/check_role";
 
 const admin_comunidade = Router();
 
@@ -17,6 +18,7 @@ admin_comunidade.post(
 );
 admin_comunidade.delete(
     "/delete/:id",
+    check_role,
     ControllerAdminComunidade.delete_admin_comunidade_by_id,
 );
 

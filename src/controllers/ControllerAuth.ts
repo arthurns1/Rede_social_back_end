@@ -13,6 +13,15 @@ export class ControllerAuth {
                 "SELECT * FROM usuarios WHERE login = $1",
                 [req.body.login],
             );
+
+            if (query.rows.length === 0) {
+                res.status(404).json({
+                    error_message: "Usuário não encontrado",
+                    error: {},
+                });
+                return;
+            }
+
             const usuario = query.rows[0] as Usuario;
 
             const token = await Jwt.sign(

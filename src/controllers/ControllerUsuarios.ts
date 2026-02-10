@@ -11,13 +11,60 @@ export interface Usuario {
 export class ControllerUsuarios {
     static async create_usuario(req: Request<{}, {}, Usuario>, res: Response) {
         try {
-            console.log(req.body);
             const params = [
                 req.body.login,
                 req.body.senha,
                 req.body.cargo,
                 req.body.nome_usuario,
             ];
+
+            if (req.body.senha.length < 3) {
+                res.status(400).json({
+                    error_message: "Senha muito curta!",
+                    error: {},
+                });
+                return;
+            }
+
+            if (req.body.nome_usuario.length < 3) {
+                res.status(400).json({
+                    error_message: "Nome de usuário muito curto!",
+                    error: {},
+                });
+                return;
+            }
+
+            if (req.body.login.length < 3) {
+                res.status(400).json({
+                    error_message: "Login muito curto!",
+                    error: {},
+                });
+                return;
+            }
+
+            if (req.body.login.length > 20) {
+                res.status(400).json({
+                    error_message: "Login muito longo!",
+                    error: {},
+                });
+                return;
+            }
+
+            if (req.body.senha.length > 20) {
+                res.status(400).json({
+                    error_message: "Senha muito longa!",
+                    error: {},
+                });
+                return;
+            }
+
+            if (req.body.senha.length > 30) {
+                res.status(400).json({
+                    error_message: "Nome de usuário muito longo!",
+                    error: {},
+                });
+                return;
+            }
 
             await pool.query(
                 "INSERT INTO usuarios (login, senha, cargo, nome_usuario) VALUES ($1,$2,$3,$4);",

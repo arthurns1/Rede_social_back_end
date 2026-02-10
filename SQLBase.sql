@@ -12,10 +12,11 @@ CREATE TABLE IF NOT EXISTS public.admins_comunidade
 
 CREATE TABLE IF NOT EXISTS public.amizades
 (
+    id_amizade serial NOT NULL,
     login_amigo character varying(20) COLLATE pg_catalog."default" NOT NULL,
     login_usuario character varying(20) COLLATE pg_catalog."default" NOT NULL,
     status character varying(8) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT pk_amizade PRIMARY KEY (login_amigo, login_usuario)
+    CONSTRAINT pk_amizades PRIMARY KEY (id_amizade)
 );
 
 CREATE TABLE IF NOT EXISTS public.comunidades
@@ -88,17 +89,17 @@ ALTER TABLE IF EXISTS public.admins_comunidade
 
 
 ALTER TABLE IF EXISTS public.amizades
-    ADD CONSTRAINT fk_login_amigo FOREIGN KEY (login_usuario)
+    ADD CONSTRAINT fk_amizades_usuarios1 FOREIGN KEY (login_amigo)
     REFERENCES public.usuarios (login) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+    ON DELETE CASCADE;
 
 
 ALTER TABLE IF EXISTS public.amizades
-    ADD CONSTRAINT fk_login_usuario FOREIGN KEY (login_amigo)
+    ADD CONSTRAINT fk_amizades_usuarios2 FOREIGN KEY (login_usuario)
     REFERENCES public.usuarios (login) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+    ON DELETE CASCADE;
 
 
 ALTER TABLE IF EXISTS public.mensagens
@@ -155,5 +156,7 @@ ALTER TABLE IF EXISTS public.usuarios_comunidades
     REFERENCES public.usuarios (login) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE CASCADE;
+
+INSERT INTO usuarios (login, senha, cargo, nome_usuario) VALUES ('admin', '0000', 'Admin', 'Admin');
 
 END;

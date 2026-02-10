@@ -132,8 +132,30 @@ export class ControllerComunidades {
         }
     }
 
+    static async update_comunidade_name_by_id(req: Request, res: Response) {
+        try {
+            const params = [req.body.nome_comunidade, req.params.id];
+
+            const results = await pool.query(
+                "UPDATE comunidades SET nome_comunidade = $1 WHERE id_comunidade = $2 ;",
+                params,
+            );
+
+            res.status(201).json({
+                success_message: "Sucesso ao alterar comunidade!",
+                results: results,
+            });
+        } catch (err) {
+            res.status(500).json({
+                error_message: "Houve um erro interno ao alterar comunidade!",
+                error: err,
+            });
+        }
+    }
+
     static async delete_comunidade_by_id(req: Request, res: Response) {
         try {
+            console.log(req.params);
             const params = [req.params.id];
 
             const results = await pool.query(
